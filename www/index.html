@@ -1,0 +1,73 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles/styles.css" />
+<script src="scripts/jquery-1.5.js"></script> 
+<script>
+$(document).ready(function(){
+$('#codelabel').hide();
+$('#code').hide();
+$('#loading').hide();
+
+ $('#regForm').submit(function(e) {
+		e.preventDefault();
+		$('#loading').show();	
+		$('#codelabel').show("slow");
+		$('#code').show("slow");
+		$('input[class=first]').addClass('gray').attr('readonly', true);
+		
+ });
+});
+</script>
+</head>
+<body>
+<div id="div-regForm">
+<div class="form-title">Где пара?</div>
+
+      <div class="form-sub-title">Подтвердите регистрацию</div>
+		<form id="regForm" action="submit.php" method="post">
+		<table>
+			<tbody>
+				<tr>
+					<td><label for="fname">Имя:</label></td>
+					<td><div class="input-container">
+						<input name="fname" id="fname" class="first" type="text" />
+					</div></td>
+				</tr>
+				<tr>
+					<td><label for="lname">Фамилия:</label></td>
+					<td><div class="input-container">
+						<input name="lname" id="lname" class="first" type="text" />
+					</div></td>
+				</tr>
+				<tr>
+					<td><label for="lname">Отчество:</label></td>
+					<td><div class="input-container">
+						<input name="lname" id="lname" class="first"  type="text" />
+					</div></td>
+				</tr>
+				<tr>
+					<td><label for="email">Мобильный:</label></td>
+					<td><div class="input-container">
+						<input name="email" id="email" class="first" type="text" />
+					</div></td>
+				</tr>	
+				<tr>
+					
+					<td><label for="codelabel" id="codelabel">Полученный код:</label></td>
+					<td><div class="input-container">
+						<input name="code" id="code" type="text" />
+					</div></td>
+				
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td><input type="submit" class="greenButton" value="Продолжить>>>" />
+						<img id="loading" src="img/ajax-loader.gif" alt="working.." width="20" height="20"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+	
+</div>
+</body>
