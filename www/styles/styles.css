@@ -24,6 +24,9 @@ input,select{
 .gray{
 	background-color:LightGrey;
 }
+.pink{
+	background-color:pink;
+}
 select{
       width:auto;
       padding:2px;
@@ -88,6 +91,7 @@ td{
       left:10px;
       position:relative;
       top:3px; 
-
+	  visibility:hidden;
       }
+#error{background-color:#ffebe8;border:1px solid #dd3c10;padding:7px 3px;text-align:center;margin-top:10px;visibility:hidden;}	 
 
