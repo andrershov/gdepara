@@ -47,12 +47,12 @@ function fetchUser($phone){
 session_start();
 if (isset($_SESSION['code'])){
 	if (empty($_REQUEST['code'])){
-		buildAnswer(2, "Code field is required!", array("code"));
+		buildAnswer(2, "Введите код подтверждения!", array("code"));
 	} else
 	if ($_REQUEST['code']==$_SESSION['code']){
 		buildAnswer(1);
 	} else {
-		buildAnswer(2, "Invalid confirming code!", array("code"));
+		buildAnswer(2, "Неверный код подтверждения!", array("code"));
 	}
 } else
 {
@@ -62,18 +62,18 @@ if (isset($_SESSION['code'])){
 		if (empty($_REQUEST[$field])) $empty[]=$field;
 	}
 	if (isset($empty)){
-		buildAnswer(2, "All fields are required!", $empty);
+		buildAnswer(2, "Заполните все поля!", $empty);
 		return;	
 	} 
 	$user=fetchUser($_REQUEST['mobile']);
 	if (empty($user)){
-		buildAnswer(2, "No such phone in database!", array('mobile'));
+		buildAnswer(2, "Такой телефон не зарегистрирован!", array('mobile'));
 	} else
 	if ($user['registered']){
-		buildAnswer(2, "User already registered!", array('mobile'));	
+		buildAnswer(2, "Такой пользователь уже зарегистрирован!", array('mobile'));	
 	} else
 	if ($_REQUEST['name']!=$user['name'] || $_REQUEST['surname']!=$user['surname'] || $_REQUEST['patronymic']!=$user['patronymic']){
-		buildAnswer(2, "Phone exists, but name is invalid!", array("name", "surname", "patronymic"));
+		buildAnswer(2, "Номер зарегистрирован, но ФИО введено не верно!", array("name", "surname", "patronymic"));
 	} else {
 		$_SESSION['code']=generatePassword();
 		sendSms($_REQUEST['mobile'], $_SESSION['code']);
