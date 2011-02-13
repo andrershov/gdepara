@@ -4,7 +4,7 @@ define ('USER', "root");
 define ('PASSW', "root");
 define ('DB', "gdepara");
 
-function generatePassword ($length = 8)
+function generateCode ($length = 8)
 {
     $password = "";
     $possible = "2346789bcdfghjkmnpqrtvwxyzBCDFGHJKLMNPQRTVWXYZ";
@@ -26,13 +26,24 @@ function generatePassword ($length = 8)
     return $password;
 }
 
-//just a stub, write generated code to file. TODO
-function sendSms($mobile, $code){
-	$f=fopen("sms.txt", "w");
-	fwrite($f, $code);
-	fclose($f);
-}
+function sendSmsMessage($in_phoneNumber, $in_msg)
+{
+	define('CONFIG_KANNEL_USER_NAME', 'kanneluser');
+	define('CONFIG_KANNEL_PASSWORD', 'bar');
+	define('CONFIG_KANNEL_HOST', 'localhost');
+	define('CONFIG_KANNEL_PORT', '13013');
+	define('FROM', 'gdepara');
+	$url = '/cgi-bin/sendsms?username=' . CONFIG_KANNEL_USER_NAME
+          . '&password=' . CONFIG_KANNEL_PASSWORD
+          . '&charset=UTF-8'
+          . "&to={$in_phoneNumber}"
+          . '&text=' . urlencode($in_msg);
 
+
+   $results = file('http://'
+                   . CONFIG_KANNEL_HOST . ':'
+                   . CONFIG_KANNEL_PORT . $url);
+}
 
 function buildAnswer($status, $text=null, $fields=null){
 	echo json_encode(array("status"=>$status, "text"=>$text, "fields"=>$fields));
@@ -40,22 +51,29 @@ function buildAnswer($status, $text=null, $fields=null){
 function fetchUser($phone){	
 	mysql_connect(HOST, USER, PASSW) or die(mysql_error());
 	mysql_select_db(DB) or die(mysql_error());
-	$res=mysql_query("select id, name, surname, patronymic, mobile, registered from users where mobile='".$phone."'") or die(mysql_error());
+	mysql_query('SET NAMES utf8'); 
+	$res=mysql_query("select id, name, surname, patronymic, mobile, registered from users where mobile='".mysql_escape_string($phone)."'") or die(mysql_error());
 	return mysql_fetch_assoc($res);
 }
 
 session_start();
+
 if (isset($_SESSION['code'])){
-	if (empty($_REQUEST['code'])){
+	$code=trim($_REQUEST['code']);
+	if (empty($code)){
 		buildAnswer(2, "Введите код подтверждения!", array("code"));
 	} else
-	if ($_REQUEST['code']==$_SESSION['code']){
+	if (md5($code)==$_SESSION['code']){
 		buildAnswer(1);
 	} else {
 		buildAnswer(2, "Неверный код подтверждения!", array("code"));
 	}
 } else
 {
+	$name=trim($_REQUEST['name']);
+	$surname=trim($_REQUEST['surname']);
+	$patronymic=trim($_REQUEST['patronymic']);
+	$mobile=trim($_REQUEST['mobile']);
 	$fields=array('name', 'surname', 'patronymic', 'mobile');
 	foreach ($fields as $field)
 	{
@@ -65,18 +83,20 @@ if (isset($_SESSION['code'])){
 		buildAnswer(2, "Заполните все поля!", $empty);
 		return;	
 	} 
-	$user=fetchUser($_REQUEST['mobile']);
+	$user=fetchUser($mobile);
+	
 	if (empty($user)){
 		buildAnswer(2, "Такой телефон не зарегистрирован!", array('mobile'));
 	} else
 	if ($user['registered']){
 		buildAnswer(2, "Такой пользователь уже зарегистрирован!", array('mobile'));	
 	} else
-	if ($_REQUEST['name']!=$user['name'] || $_REQUEST['surname']!=$user['surname'] || $_REQUEST['patronymic']!=$user['patronymic']){
+	if ($name!=$user['name'] || $surname!=$user['surname'] || $patronymic!=$user['patronymic']){
 		buildAnswer(2, "Номер зарегистрирован, но ФИО введено не верно!", array("name", "surname", "patronymic"));
 	} else {
-		$_SESSION['code']=generatePassword();
-		sendSms($_REQUEST['mobile'], $_SESSION['code']);
+		$code=generateCode();
+		sendSmsMessage($mobile, "Confirming code: $code");
+		$_SESSION['code']=md5($code);
 		buildAnswer(0);
 	}
 }
