@@ -1,7 +1,7 @@
 <?
 define ('HOST', "localhost");
 define ('USER', "root");
-define ('PASSW', "root");
+define ('PASSW', "kissmyass");
 define ('DB', "gdepara");
 
 function generateCode ($length = 8)
@@ -28,17 +28,17 @@ function generateCode ($length = 8)
 
 function sendSmsMessage($in_phoneNumber, $in_msg)
 {
-	define('CONFIG_KANNEL_USER_NAME', 'kanneluser');
-	define('CONFIG_KANNEL_PASSWORD', 'bar');
+	define('CONFIG_KANNEL_USER_NAME', 'gdeparaadmin');
+	define('CONFIG_KANNEL_PASSWORD', '123456');
 	define('CONFIG_KANNEL_HOST', 'localhost');
 	define('CONFIG_KANNEL_PORT', '13013');
 	define('FROM', 'gdepara');
 	$url = '/cgi-bin/sendsms?username=' . CONFIG_KANNEL_USER_NAME
-          . '&password=' . CONFIG_KANNEL_PASSWORD
-          . '&charset=UTF-8'
-          . "&to={$in_phoneNumber}"
-          . '&text=' . urlencode($in_msg);
-
+		. '&password=' . CONFIG_KANNEL_PASSWORD
+		//. '&charset=UCS2'
+		//. '&coding=2'
+		. "&to={$in_phoneNumber}"
+		. '&text='.urlencode($in_msg);
 
    $results = file('http://'
                    . CONFIG_KANNEL_HOST . ':'
@@ -64,6 +64,8 @@ if (isset($_SESSION['code'])){
 		buildAnswer(2, "Введите код подтверждения!", array("code"));
 	} else
 	if (md5($code)==$_SESSION['code']){
+		$_SESSION['register']=true;
+		unset($_SESSION['code']);
 		buildAnswer(1);
 	} else {
 		buildAnswer(2, "Неверный код подтверждения!", array("code"));
@@ -86,17 +88,18 @@ if (isset($_SESSION['code'])){
 	$user=fetchUser($mobile);
 	
 	if (empty($user)){
-		buildAnswer(2, "Такой телефон не зарегистрирован!", array('mobile'));
+		buildAnswer(2, "Номер телефона не зарегистрирован!", array('mobile'));
 	} else
 	if ($user['registered']){
 		buildAnswer(2, "Такой пользователь уже зарегистрирован!", array('mobile'));	
 	} else
 	if ($name!=$user['name'] || $surname!=$user['surname'] || $patronymic!=$user['patronymic']){
-		buildAnswer(2, "Номер зарегистрирован, но ФИО введено не верно!", array("name", "surname", "patronymic"));
+		buildAnswer(2, "Номер зарегистрирован, но ФИО введено неверно!", array("name", "surname", "patronymic"));
 	} else {
 		$code=generateCode();
-		sendSmsMessage($mobile, "Confirming code: $code");
+		sendSmsMessage($mobile, "Your confirmation code: $code");
 		$_SESSION['code']=md5($code);
+		$_SESSION['user_id']=$user['id'];
 		buildAnswer(0);
 	}
 }

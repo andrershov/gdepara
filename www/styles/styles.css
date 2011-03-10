@@ -35,7 +35,7 @@ select{
       padding:3px;
       }
 label{
-      font-size:11px;
+      font-size:14px;
       text-align:right;
       }
 table{
@@ -46,6 +46,8 @@ td{
       }
 .input-container{
       padding:1px;
+	font-size:12px;
+
       }
 #div-regForm,.registered{
       border:3px solid #eeeeee;
@@ -64,7 +66,7 @@ td{
 .form-title,
       .form-sub-title{
       font-size:20px;
- font-family:"Lucida Grande",Tahoma,Verdana,Arial,sans-serif;
+	font-family:"Lucida Grande",Tahoma,Verdana,Arial,sans-serif;
       font-size:20px;
       font-weight:bold;
       }
@@ -72,6 +74,9 @@ td{
       font-weight:normal;
       padding:6px 0 15px 0;
       }
+.input-container{
+	padding-bottom:10px;
+}
 .greenButton{
       width:auto;
       margin:10px 0 0 2px;

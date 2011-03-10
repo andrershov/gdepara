@@ -5,11 +5,11 @@
 <script src="scripts/js/jquery-1.5.js"></script> 
 <script>
 $(document).ready(function(){
-$('#codelabel').hide();
-$('#code').hide();
+	$('#codelabel').hide();
+	$('#code').hide();
 
 
- $('#regForm').submit(function(e) {
+	$('#regForm').submit(function(e) {
 		e.preventDefault();
 	
 		$('input').removeClass('pink');
@@ -19,25 +19,23 @@ $('#code').hide();
 		
 		
 		$.getJSON("scripts/php/registration.php", $("#regForm").serialize(),function(message){
-		$('#loading').hide();	
-		if (parseInt(message.status)==0){
-			$('#codelabel').show("slow");
-			$('#code').show("slow");
-			$fio.addClass('gray').attr('readonly', true);
-		} else
-		if (parseInt(message.status)==1){
-			alert("Succesful registration!");
-		} else
-		{
-			$('#error').css('visibility', 'visible').html(message.text);
-			$.each(message.fields, function(){
-				$('#'+this).addClass('pink');
-			});
-			
-		}
-		
+			$('#loading').hide();	
+			if (parseInt(message.status)==0){
+				$('#codelabel').show("slow");
+				$('#code').show("slow");
+				$fio.addClass('gray').attr('readonly', true);
+			} else
+			if (parseInt(message.status)==1){
+				<!-- alert("Succesful registration!"); --> 
+				open("complete.php",'_self');
+			} else	{
+				$('#error').css('visibility', 'visible').html(message.text);
+				$.each(message.fields, function(){
+					$('#'+this).addClass('pink');
+				});
+			}
 		});
- });
+	});
  
  
 });
@@ -53,47 +51,60 @@ $('#code').hide();
 		<table>
 			<tbody>
 				<tr>
-					<td><label for="surname">Фамилия:</label></td>
-					<td><div class="input-container">
+					<label for="surname">Фамилия:</label>
+				</tr>
+				<tr>
+					<div class="input-container">
 						<input name="surname" id="surname" class="first" type="text" />
-					</div></td>
+					</div>
+				</tr>
+				
+				<tr>
+					<label for="name">Имя:</label>
 				</tr>
 				<tr>
-					<td><label for="name">Имя:</label></td>
-					<td><div class="input-container">
+					<div class="input-container">
 						<input name="name" id="name" class="first" type="text" />
-					</div></td>
+					</div>
 				</tr>				
+				
 				<tr>
-					<td><label for="patronymic">Отчество:</label></td>
-					<td><div class="input-container">
+					<label for="patronymic">Отчество:</label>
+				</tr>
+				<tr>
+					<div class="input-container">
 						<input name="patronymic" id="patronymic" class="first"  type="text" />
-					</div></td>
+					</div>
 				</tr>
+				
 				<tr>
-					<td><label for="mobile">Мобильный:</label></td>
-					<td><div class="input-container">
+					<label for="mobile">Мобильный:</label>
+				</tr>
+				
+				<tr>
+					<div class="input-container">
 						<input name="mobile" id="mobile" class="first" type="text" />
-					</div></td>
+					</div>
 				</tr>
 				
 				<tr>
-					
-					<td><label for="code" id="codelabel">Полученный код:</label></td>
-					<td><div class="input-container">
+					<label for="code" id="codelabel">Полученный код:</label>
+				</tr>
+				<tr>
+					<div class="input-container">
 						<input name="code" id="code" type="text" />
-					</div></td>
+					</div>
+				</tr>
 				
-				</tr>
 				<tr>
-			
+					&nbsp;
 				</tr>
+					
 				<tr>
-					<td>&nbsp;</td>
-					<td><input type="submit" class="greenButton" value="Продолжить>>>" />
+					<input type="submit" class="greenButton" value="Продолжить>>>" />
 						<img id="loading" src="img/ajax-loader.gif" alt="working.." width="20" height="20"/>
-					</td>
 				</tr>
+				
 			</tbody>
 		</table>
 	</form>
